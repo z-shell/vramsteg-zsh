@@ -1,0 +1,206 @@
+.TH vramsteg 1 2013-09-02 "vramsteg 1.1.0" "User Manuals"
+
+.SH NAME
+vramsteg \- CLI progress bar
+
+.SH SYNOPSIS
+To display/update a progress bar:
+
+.B vramsteg --min <integer> --max <integer> --current <integer> [options]
+
+To remove a progress bar:
+
+.B vramsteg --remove
+
+To capture the start time:
+
+.B START=$(vramsteg --now)
+
+To include elapsed time (which requires a start time):
+
+.B vramsteg --start=$START --elapsed ...
+
+To include estimated remaining time (which requires a start time):
+
+.B vramsteg --start=$START --estimate ...
+
+To use a specific bar width:
+
+.B vramsteg --width 100 ...
+
+To show the percentage completed:
+
+.B vramsteg --percentage ...
+
+To show a label at the beginning of the bar:
+
+.B vramsteg --label "This is a label" ...
+
+To use an alternate rendering style:
+
+.B vramsteg --style <style-name> ...
+
+.SH DESCRIPTION
+('progress' in Swedish, almost) is an open source, command line utility that
+provides shell scripts with a full-featured progress indicator.  The progress
+bar can display elapsed time, remaining time estimate, percentage completed, and
+labels.  The progress bar can have user-specified colors, and be rendered in
+multiple styles.
+
+If you have a shell script, or in fact any command line program that needs a
+progress bar, vramsteg may be the right solution.  Suppose you have a program
+that is performing a lengthy operation, provided that it has an opportunity to
+execute vramsteg frequently, then integrating a progress bar is simple.
+
+You may have seen progress bars used to good effect in the rsync or scp commands,
+among others.
+
+.SH EXAMPLES
+Here is a complete bash shell script illustrating how vramsteg works, in the
+simplest case:
+
+    #! /bin/bash
+
+    vramsteg \-\-min 0 \-\-max 4 \-\-current 0
+    sleep 1
+    vramsteg \-\-min 0 \-\-max 4 \-\-current 1
+    sleep 1
+    vramsteg \-\-min 0 \-\-max 4 \-\-current 2
+    sleep 1
+    vramsteg \-\-min 0 \-\-max 4 \-\-current 3
+    sleep 1
+    vramsteg \-\-min 0 \-\-max 4 \-\-current 4
+    echo
+
+Obviously this is a contrived example, but it illustrates how vramsteg is used
+to show a 4 step process.  The \-\-min and \-\-max arguments specify what constitutes
+0% and 100% of the work, and are integer values.  The \-\-current argument
+represents where the progress bar is at any moment.  The example takes 4 seconds
+to complete, but those sleep commands are proxies for whatever your program is
+doing.
+
+A more realistic example involves looping.  Here is a simple shell script loop
+that will be used for a more complete example:
+
+    #! /bin/bash
+
+    for i in {0..10}
+    do
+      vramsteg \-\-min 0 \-\-max 10 \-\-current $i
+      sleep 1
+    done
+    echo
+
+Again, the sleep command represents the real work that is being done.  Note that
+the 'echo' command at the end provides a newline character to prevent any text
+from overwriting the bar.  To remove the bar when done, the script becomes:
+
+    #! /bin/bash
+
+    for i in {0..10}
+    do
+      vramsteg \-\-min 0 \-\-max 10 \-\-current $i
+      sleep 1
+    done
+    vramsteg \-\-remove
+
+Now the last list replaces the need for the 'echo' command.
+
+There are two features that require some additional code.  In order to display
+the elapsed time, vramsteg needs to know the time when the process began.
+Because vramsteg is stateless, the start time needs to be specified on every
+call, but first the start time must be captured.  There is a \-\-now option that
+causes the current time (in epoch form) to be displayed:
+
+    vramsteg \-\-now
+    1276361315
+
+This value needs to be captured by the shell script, like this:
+
+    START=$(vramsteg \-\-now)
+
+or
+
+    START=`vramsteg \-\-now`
+
+Then along with the \-\-elapsed option, the start time is provided to each call
+of vramsteg like this:
+
+    #! /bin/bash
+
+    START=$(../vramsteg \-\-now)
+    for i in {0..10}
+    do
+      vramsteg \-\-min 0 \-\-max 10 \-\-current $i \-\-start $START \-\-elapsed
+      sleep 1
+    done
+    vramsteg \-\-remove
+
+Because vramsteg is stateless, which means it doesn't record any information on
+disk, the start time needs to be specified for every vramsteg call that makes
+use of it.
+
+The other feature is an estimate of the remaining time, which is used in a
+similar fashion:
+
+    #! /bin/bash
+
+    START=$(../vramsteg \-\-now)
+    for i in {0..10}
+    do
+      vramsteg \-\-min 0 \-\-max 10 \-\-current $i \-\-start $START \-\-estimate
+      sleep 1
+    done
+    vramsteg \-\-remove
+
+The estimated time only displays whole numbers of seconds, and because the \-\-now
+option also only returns whole seconds, there can be inaccuracies in the elapsed
+and estimated time if process is fast.
+
+By default, vramsteg uses 80 columns to display the progress bar.  You may override
+this by specifying a different width, but if you do, then you must also specify
+that width for all vramsteg calls, such as:
+
+    vramsteg \-\-remove \-\-width 100
+
+If you specify a width that is too small to include features like the label,
+percentage, elapsed and estimated time, an error is reported.
+
+If you enter the command:
+
+    vramsteg
+
+without arguments, the command usage is displayed, including examples of progress
+bars in the supported styles.
+
+.SH FILES
+Vramsteg has no external dependencies, uses no files, and leaves no trace.  It
+is, in fact, a completely stateless program, which is why there are required
+command line arguments for some features.
+
+.SH "CREDITS & COPYRIGHTS"
+Copyright (C) 2010 \- 2015 P. Beckingham, F. Hernandez
+Copyright (C) 2010 \- 2015 Göteborg Bit Factory
+.br
+Vramsteg is distributed under the MIT license. See
+http://www.opensource.org/licenses/mit-license.php for more information.
+
+.SH SEE ALSO
+For more information regarding vramsteg, the following may be referenced:
+
+.TP
+The official site at
+<http://tasktools.org>
+
+.TP
+The official code repository at
+<https://git.tasktools.org/scm/ut/vramsteg.git>
+
+.TP
+You can contact the project by writing an email to
+<support@yootabory.com>
+
+.SH REPORTING BUGS
+.TP
+Bugs in vramsteg may be reported to <support@yootabory.com>
+
