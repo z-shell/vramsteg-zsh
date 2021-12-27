@@ -1,0 +1,21 @@
+------ current release ---------------------------
+
+1.1.0 ()
+- TW-1296 make test/run_all exit with non-zero code if a test fail (thanks to
+          Jakub Wilk).
+- Added an initial test suite.
+- Corrected copyright line in source.
+- Added support for 64-bit values for --min, --max, and --current arguments to
+  avoid overflows caused by using int (thanks to Jason A. Pfeil).
+
+------ old releases ------------------------------
+
+1.0.1 (2013-09-02) c6030b2768bc94192ff042cdde42782f713c1050
+- Fixed compiler warnings.
+
+1.0.0
+- Initial release supporting three bar styles, percentage, elapsed, remaining,
+  labels and width settings.
+- When -width is not specified, uses the whole terminal width.
+
+Vramsteg project officially began 6th June, 2010.
