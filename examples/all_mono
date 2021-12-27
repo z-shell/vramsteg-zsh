@@ -1,0 +1,20 @@
+#! /bin/bash
+
+echo 'mono' style
+echo Default colors
+echo With width
+echo With percentage
+echo With elapsed time
+echo With estimated remaining time
+echo With label
+echo With remove
+
+START=$(../src/vramsteg --now)
+for i in {0..10}
+do
+  ../src/vramsteg --style mono --width 80 --label label --min 0 --max 10 --current $i --percentage --elapsed --estimate --start $START
+  sleep 1
+done
+
+../src/vramsteg --width 80 --remove
+
