@@ -16,5 +16,7 @@ usage.
 The goal of this repository is to host vramsteg on Github, so that it can be
 installed as Zshell plugin, with following commands added to ~/.zshrc:
 
+```zsh
 zi ice as'command' pick'src/vramsteg' atclone'cmake .' atpull'%atclone' make
 zi light z-shell/vramsteg-zsh
+```
