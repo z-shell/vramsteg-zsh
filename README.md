@@ -17,6 +17,7 @@ The goal of this repository is to host vramsteg on Github, so that it can be
 installed as Zshell plugin, with following commands added to ~/.zshrc:
 
 ```zsh
-zi ice as'command' pick'src/vramsteg' atclone'cmake .' atpull'%atclone' make
+zi ice has'cmake;make' as'command' pick'src/vramsteg' \
+  atclone'cmake . ; cp -vf doc/man/vramsteg.1 ${ZI[MAN_DIR]}/man1' atpull'%atclone' make
 zi light z-shell/vramsteg-zsh
 ```
